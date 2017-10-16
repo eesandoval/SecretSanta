@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Secret Santa</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="dummy_header_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at ante libero. Morbi sagittis volutpat sem. Sed libero turpis, porta in condimentum non, fringilla dapibus elit.</string>
+    <string name="dummy_paragraph_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at ante libero. Morbi sagittis volutpat sem. Sed libero turpis, porta in condimentum non, fringilla dapibus elit. Proin pharetra sapien non lorem tristique gravida. Sed varius est non massa tincidunt dignissim. Nam nulla mauris, finibus vitae dapibus vitae, porttitor vitae nunc. Phasellus efficitur gravida tortor, sed pretium mi laoreet at. Mauris vulputate vestibulum ullamcorper. Proin pellentesque, nulla id ultrices accumsan, dolor dolor efficitur arcu, sed iaculis mi orci et est. Sed congue suscipit posuere. Etiam ac fermentum metus, ut consequat sapien. Nam at diam rhoncus enim placerat sollicitudin sit amet quis elit. Nunc egestas, ex at gravida laoreet, dolor libero vehicula mi, at aliquet sem justo eu neque. Aliquam facilisis rhoncus risus scelerisque lacinia. Nam non mauris ante. </string>
+</resources>

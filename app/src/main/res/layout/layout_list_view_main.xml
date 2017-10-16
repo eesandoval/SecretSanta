@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
+    android:paddingTop="25dp">
+
+    <ImageView
+        android:id="@+id/layout_list_view_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <!-- Header cannot exceed 56 characters, or else truncation occurs -->
+    <TextView
+        android:id="@+id/layout_list_view_header_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/dummy_header_text"
+        android:maxLines="1"
+        android:textColor="@color/colorAccent"/>
+
+
+    <!-- New line -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/layout_list_view_body_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="10"
+        android:text="@string/dummy_paragraph_text"
+        android:textColor="@color/colorAccent"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorAccent"
+        android:text="See more"/>
+
+</LinearLayout>
