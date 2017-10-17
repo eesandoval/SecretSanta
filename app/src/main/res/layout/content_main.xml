@@ -15,7 +15,7 @@
         android:layout="@layout/layout_list_view_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryDark">
+        android:background="@color/colorPrimaryLight">
     </ListView>
 
 </LinearLayout>

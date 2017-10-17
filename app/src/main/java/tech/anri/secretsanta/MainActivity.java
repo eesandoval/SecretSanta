@@ -1,8 +1,11 @@
 package tech.anri.secretsanta;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,15 +15,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    private boolean login = false;
+    private String username;
+    private String password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +61,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        if (!login) {
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_share).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_manage).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_camera).setVisible(false);
+        }
     }
 
     @Override
@@ -63,7 +78,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }
+       }
     }
 
     @Override
@@ -98,13 +113,69 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_login) {
+            LayoutInflater li = LayoutInflater.from(this);
+            View promptsView = li.inflate(R.layout.login_prompt, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+            alertDialogBuilder.setView(promptsView);
+
+            final EditText userName = (EditText) promptsView.findViewById(R.id.login_username);
+
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("Login",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    username = userName.getText().toString();
+                                    login = true;
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    login = false;
+                                    dialog.cancel();
+                                }
+                            });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            alertDialog.show();
+
+            if (login) {
+                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+                navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+                navigationView.getMenu().findItem(R.id.nav_share).setVisible(true);
+                navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(true);
+                navigationView.getMenu().findItem(R.id.nav_manage).setVisible(true);
+                navigationView.getMenu().findItem(R.id.nav_camera).setVisible(true);
+                TextView navUsername = (TextView) findViewById(R.id.nav_header_username);
+                navUsername.setText(this.username);
+                TextView navEmail = (TextView) findViewById(R.id.nav_header_email);
+                String email = this.username + "@gmail.com";
+                navEmail.setText(email);
+            }
+        } else if (id == R.id.nav_logout) {
+
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            login = false;
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_share).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_manage).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_camera).setVisible(false);
+            TextView navUsername = (TextView) findViewById(R.id.nav_header_username);
+            navUsername.setText(R.string.dummy_name);
+            TextView navEmail = (TextView) findViewById(R.id.nav_header_email);
+            navEmail.setText(R.string.dummy_email_address);
 
         }
 
