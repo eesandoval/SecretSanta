@@ -1,7 +1,10 @@
 package tech.anri.secretsanta;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity
     private boolean login = false;
     private String username;
     private String password;
+    private String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         ListView mainListView = (ListView) findViewById(R.id.main_list_view);
         ArrayList<MainListViewDataModel> l = new ArrayList<>();
         for (int i = 0; i < 12; ++i) {
-            l.add(new MainListViewDataModel("This is a header" + (i + 1), "This is a paragraph" + (i + 1), "ic_action_name"));
+            l.add(new MainListViewDataModel(getString(R.string.dummy_header_text), getString(R.string.dummy_paragraph_text), "ic_action_name"));
         }
         MainListViewAdapter customAdapter = new MainListViewAdapter(this, R.layout.layout_list_view_main, l);
         mainListView.setAdapter(customAdapter);
@@ -61,14 +66,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        if (!login) {
-            navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
-            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_share).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_manage).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_camera).setVisible(false);
-        }
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        this.email = sharedPreferences.getString("email", null);
+        this.password = sharedPreferences.getString("password", null);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navHeaderEmail = (TextView)headerView.findViewById(R.id.nav_header_email);
+        TextView navHeaderUsername = (TextView)headerView.findViewById(R.id.nav_header_username);
+        navHeaderUsername.setText(this.email.substring(0, this.email.indexOf('@')));
+        navHeaderEmail.setText(this.email);
     }
 
     @Override
@@ -117,70 +123,20 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_login) {
-            LayoutInflater li = LayoutInflater.from(this);
-            View promptsView = li.inflate(R.layout.login_prompt, null);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-            alertDialogBuilder.setView(promptsView);
-
-            final EditText userName = (EditText) promptsView.findViewById(R.id.login_username);
-
-            alertDialogBuilder
-                    .setCancelable(false)
-                    .setPositiveButton("Login",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    username = userName.getText().toString();
-                                    login = true;
-                                }
-                            })
-                    .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    login = false;
-                                    dialog.cancel();
-                                }
-                            });
-
-            AlertDialog alertDialog = alertDialogBuilder.create();
-
-            alertDialog.show();
-
-            if (login) {
-                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-                navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
-                navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
-                navigationView.getMenu().findItem(R.id.nav_share).setVisible(true);
-                navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(true);
-                navigationView.getMenu().findItem(R.id.nav_manage).setVisible(true);
-                navigationView.getMenu().findItem(R.id.nav_camera).setVisible(true);
-                TextView navUsername = (TextView) findViewById(R.id.nav_header_username);
-                navUsername.setText(this.username);
-                TextView navEmail = (TextView) findViewById(R.id.nav_header_email);
-                String email = this.username + "@gmail.com";
-                navEmail.setText(email);
-            }
         } else if (id == R.id.nav_logout) {
-
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            login = false;
-            navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
-            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_share).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_manage).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_camera).setVisible(false);
-            TextView navUsername = (TextView) findViewById(R.id.nav_header_username);
-            navUsername.setText(R.string.dummy_name);
-            TextView navEmail = (TextView) findViewById(R.id.nav_header_email);
-            navEmail.setText(R.string.dummy_email_address);
-
+            SharedPreferences sharedPreferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("email");
+            editor.remove("password");
+            editor.commit();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

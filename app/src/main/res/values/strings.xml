@@ -9,7 +9,21 @@
     <string name="dummy_paragraph_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at ante libero. Morbi sagittis volutpat sem. Sed libero turpis, porta in condimentum non, fringilla dapibus elit. Proin pharetra sapien non lorem tristique gravida. Sed varius est non massa tincidunt dignissim. Nam nulla mauris, finibus vitae dapibus vitae, porttitor vitae nunc. Phasellus efficitur gravida tortor, sed pretium mi laoreet at. Mauris vulputate vestibulum ullamcorper. Proin pellentesque, nulla id ultrices accumsan, dolor dolor efficitur arcu, sed iaculis mi orci et est. Sed congue suscipit posuere. Etiam ac fermentum metus, ut consequat sapien. Nam at diam rhoncus enim placerat sollicitudin sit amet quis elit. Nunc egestas, ex at gravida laoreet, dolor libero vehicula mi, at aliquet sem justo eu neque. Aliquam facilisis rhoncus risus scelerisque lacinia. Nam non mauris ante. </string>
     <string name="dummy_name">John Doe</string>
     <string name="dummy_email_address">johndoe123@gmail.com</string>
-    <string name="login">Login</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="action_register">Register</string>
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
 </resources>
