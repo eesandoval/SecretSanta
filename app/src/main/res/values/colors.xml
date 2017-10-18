@@ -4,4 +4,5 @@
     <color name="colorPrimaryLight">#303030</color>
     <color name="colorPrimaryLighter">#424242</color>
     <color name="colorPrimaryText">#FFFFFF</color>
+    <color name="colorSecondaryText">#E0E0E0</color>
 </resources>

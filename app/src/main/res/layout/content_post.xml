@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="tech.anri.secretsanta.PostActivity"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:background="@color/colorPrimaryLight"
+    tools:showIn="@layout/activity_post">
+
+    <EditText
+        android:layout_width="1dp"
+        android:layout_height="1dp"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/colorSecondaryText"
+        android:textColor="@color/colorPrimaryText">
+        <EditText
+            android:id="@+id/post_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryText"
+            android:textColorHint="@color/colorSecondaryText"
+            android:hint="@string/header_hint"/>
+
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:textColorHint="@color/colorSecondaryText"
+        android:textColor="@color/colorPrimaryText">
+    <EditText
+        android:id="@+id/post_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/body_hint"
+        android:gravity="top|start"
+        android:textColor="@color/colorPrimaryText"
+        android:textColorHint="@color/colorSecondaryText"
+        android:lines="8"
+        android:minLines="6"
+        android:maxLines="10"/>
+
+</android.support.design.widget.TextInputLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickSelectFileButton"
+            android:text="@string/select_iamge_button"/>
+        <Button
+            android:id="@+id/post_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPostButton"
+            android:enabled="false"
+            android:text="@string/submit_item_button"/>
+    </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/selected_image"/>
+</LinearLayout>

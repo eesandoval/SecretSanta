@@ -1,5 +1,7 @@
 package tech.anri.secretsanta;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Rayziken on 10/15/2017.
  */
@@ -7,12 +9,16 @@ package tech.anri.secretsanta;
 public class MainListViewDataModel {
     private String header;
     private String body;
-    private String image;
+    private Bitmap image;
+    private String username;
+    private Bitmap userimage;
 
-    public MainListViewDataModel(String header, String body, String image) {
+    public MainListViewDataModel(String header, String body, Bitmap image, String username, Bitmap userimage) {
         this.header = header;
         this.body = body;
         this.image = image;
+        this.username = username;
+        this.userimage = userimage;
     }
 
     public String getHeader() {
@@ -23,7 +29,15 @@ public class MainListViewDataModel {
         return body;
     }
 
-    public String getImage() {
+    public Bitmap getImage() {
         return image;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Bitmap getUserimage() {
+        return userimage;
     }
 }

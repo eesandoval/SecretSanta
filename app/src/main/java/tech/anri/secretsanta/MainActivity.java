@@ -1,14 +1,14 @@
 package tech.anri.secretsanta;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,21 +18,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private boolean login = false;
     private String username;
     private String password;
     private String email;
+    private int userid;
+    private final static int POST_ACTIVITY_CALL = 1;
+    private final static int UPDATE_USER_ACTIVITY_CALL = 2;
+    ArrayList<Post> posts = new ArrayList<Post>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,20 +42,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ListView mainListView = (ListView) findViewById(R.id.main_list_view);
-        ArrayList<MainListViewDataModel> l = new ArrayList<>();
-        for (int i = 0; i < 12; ++i) {
-            l.add(new MainListViewDataModel(getString(R.string.dummy_header_text), getString(R.string.dummy_paragraph_text), "ic_action_name"));
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        if (!dbHelper.emptyDatabase()) {
+            updateFeed();
         }
-        MainListViewAdapter customAdapter = new MainListViewAdapter(this, R.layout.layout_list_view_main, l);
-        mainListView.setAdapter(customAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onFabClick();
+
             }
         });
 
@@ -66,15 +64,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        SharedPreferences sharedPreferences = this.getSharedPreferences("preferences", Context.MODE_PRIVATE);
-        this.email = sharedPreferences.getString("email", null);
-        this.password = sharedPreferences.getString("password", null);
-        View headerView = navigationView.getHeaderView(0);
-        TextView navHeaderEmail = (TextView)headerView.findViewById(R.id.nav_header_email);
-        TextView navHeaderUsername = (TextView)headerView.findViewById(R.id.nav_header_username);
-        navHeaderUsername.setText(this.email.substring(0, this.email.indexOf('@')));
-        navHeaderEmail.setText(this.email);
+        updateNavDrawer();
     }
 
     @Override
@@ -115,13 +105,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
+        if (id == R.id.nav_profile) {
+            // TODO: Update profile
+            Intent intent = new Intent(getApplicationContext(), UpdateUserActivity.class);
+            startActivityForResult(intent, UPDATE_USER_ACTIVITY_CALL);
 
         } else if (id == R.id.nav_logout) {
             SharedPreferences sharedPreferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
@@ -138,5 +125,80 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+    private void updateFeed() {
+        int maxPostId = 1;
+        ArrayList<MainListViewDataModel> l = new ArrayList<>();
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        Cursor mCursor = dbHelper.selectRecordsRaw("SELECT MAX(post_id) FROM Posts");
+        if (mCursor != null) {
+            maxPostId = mCursor.getInt(0);
+        }
+        mCursor.close();
+        posts = new ArrayList<>();
+        for (int i = 0; i < maxPostId; ++i) {
+            Post p = new Post(i + 1, getApplicationContext());
+            posts.add(p);
+            l.add(new MainListViewDataModel(p.Header, p.Body, p.Images.get(0), p.UserName, p.UserImage));
+        }
+        MainListViewAdapter customAdapter = new MainListViewAdapter(this, R.layout.layout_list_view_main, l);
+        ListView mainListView = (ListView) findViewById(R.id.main_list_view);
+        mainListView.setAdapter(customAdapter);
+    }
 
+    private void updateNavDrawer() {
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        this.email = sharedPreferences.getString("email", null);
+        this.password = sharedPreferences.getString("password", null);
+        this.username = sharedPreferences.getString("username", null);
+        this.userid = sharedPreferences.getInt("userid", 0);
+        Bitmap userImage = dbHelper.selectImage("SELECT user_image FROM Users WHERE user_id = " + this.userid);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navHeaderEmail = (TextView)headerView.findViewById(R.id.nav_header_email);
+        TextView navHeaderUsername = (TextView)headerView.findViewById(R.id.nav_header_username);
+        navHeaderUsername.setText(this.username);
+        navHeaderEmail.setText(this.email);
+        ImageView navHeaderImage = (ImageView)headerView.findViewById(R.id.nav_header_user_image);
+        if (!(userImage == null)) {
+            navHeaderImage.setImageBitmap(userImage);
+        }
+    }
+
+    private void onFabClick() {
+        Intent intent = new Intent(getApplicationContext(), PostActivity.class);
+        startActivityForResult(intent, POST_ACTIVITY_CALL);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case POST_ACTIVITY_CALL:
+                if (resultCode != 0) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
+                    Uri uri = Uri.parse(sharedPreferences.getString("url", null));
+                    String header = sharedPreferences.getString("Header", null);
+                    String body = sharedPreferences.getString("Body", null);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.remove("uri");
+                    editor.remove("Header");
+                    editor.remove("Body");
+                    editor.commit();
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                        Post p = new Post(userid, header, body, bitmap, getApplicationContext());
+                        posts.add(p);
+                        updateFeed();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            break;
+            case UPDATE_USER_ACTIVITY_CALL:
+                updateFeed();
+                updateNavDrawer();
+            break;
+        }
+    }
 }

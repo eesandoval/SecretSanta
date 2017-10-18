@@ -41,6 +41,8 @@ public class MainListViewAdapter extends ArrayAdapter {
             TextView header = (TextView) v.findViewById(R.id.layout_list_view_header_text_view);
             TextView body = (TextView) v.findViewById(R.id.layout_list_view_body_text_view);
             ImageView image = (ImageView) v.findViewById(R.id.layout_list_view_image_view);
+            ImageView userimage = (ImageView) v.findViewById(R.id.layout_list_view_user_image);
+            TextView username = (TextView) v.findViewById(R.id.layout_list_view_username);
             if (header != null) {
                 header.setText(p.getHeader());
             }
@@ -48,10 +50,13 @@ public class MainListViewAdapter extends ArrayAdapter {
                 body.setText(p.getBody());
             }
             if (image != null) {
-                String uri = "@drawable/" + p.getImage();
-                int imageResource = getContext().getResources().getIdentifier(uri, null, this.getContext().getPackageName());
-                Drawable res = getContext().getResources().getDrawable(imageResource, null);
-                image.setImageDrawable(res);
+                image.setImageBitmap(p.getImage());
+            }
+            if (userimage != null) {
+                userimage.setImageBitmap(p.getUserimage());
+            }
+            if (username != null) {
+                username.setText(p.getUsername());
             }
         }
         return v;

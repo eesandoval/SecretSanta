@@ -26,4 +26,10 @@
     <string name="action_register">Register</string>
     <item name="visible" type="id" />
     <item name="masked" type="id" />
+    <string name="title_activity_post">New Post</string>
+    <string name="title_activity_update_user">Update Profile</string>
+    <string name="body_hint">Describe your wishlist item</string>
+    <string name="header_hint">Wishlist Item</string>
+    <string name="select_iamge_button">Select an Image</string>
+    <string name="submit_item_button">Submit</string>
 </resources>
