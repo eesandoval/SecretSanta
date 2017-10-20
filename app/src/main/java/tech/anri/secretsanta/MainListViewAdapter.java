@@ -1,32 +1,36 @@
 package tech.anri.secretsanta;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+
+import static android.R.id.list;
 
 /**
  * Created by Rayziken on 10/15/2017.
  */
 
 public class MainListViewAdapter extends ArrayAdapter {
+    private List<MainListViewDataModel> list;
     public MainListViewAdapter(Context context, int resource) {
         super(context, resource);
     }
 
     public MainListViewAdapter(Context context, int resource, List<MainListViewDataModel> items) {
         super(context, resource, items);
+        list = items;
     }
 
     @Override
-    public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
+    public @NonNull View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         View v = convertView;
 
         if (v == null) {
@@ -59,6 +63,26 @@ public class MainListViewAdapter extends ArrayAdapter {
                 username.setText(p.getUsername());
             }
         }
+
+        Button deleteButton = (Button)v.findViewById(R.id.layout_list_view_delete);
+        Button editButton = (Button)v.findViewById(R.id.layout_list_view_edit);
+
+        deleteButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //do something
+                remove(getItem(position));
+                notifyDataSetChanged();
+            }
+        });
+        editButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //do something
+                notifyDataSetChanged();
+            }
+        });
+
         return v;
     }
 }

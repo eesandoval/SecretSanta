@@ -1,6 +1,7 @@
 package tech.anri.secretsanta;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -10,17 +11,18 @@ import android.util.Log;
  */
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
-
+    private Context context;
     private static final String DATABASE_NAME = "SecretSanta";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String[] DATABASE_CREATE = new String[] {
-            "CREATE TABLE Posts(post_id integer primary key, user_id integer not null, header text, body text);",
+            "CREATE TABLE Posts(post_id integer primary key, user_id integer not null, header text, body text, is_void integer);",
             "CREATE TABLE Images(image_id integer primary key, post_id integer, image blob);",
             "CREATE TABLE Users(user_id integer primary key, user_name text, user_image blob, user_email text);"};
     private static final String DATABASE_DESTROY = "DROP TABLE IF EXISTS Posts; DROP TABLE IF EXISTS Images; DROP TABLE IF EXISTS Users;";
 
     public DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -34,6 +36,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(DatabaseOpenHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + " and truncating data");
         db.execSQL(DATABASE_DESTROY);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.putBoolean("DBUpdated", true);
+        editor.commit();
         onCreate(db);
     }
 }

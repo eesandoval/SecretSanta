@@ -21,6 +21,7 @@ public class Post {
     public String UserName;
     public Bitmap UserImage;
     public String UserEmail;
+    public boolean Voided = false;
     private Context context;
     DatabaseHelper dbHelper;
 
@@ -60,11 +61,12 @@ public class Post {
     }
 
     public void ReadPost() {
-        Cursor mCursor = dbHelper.selectRecordsRaw("SELECT user_id, header, body FROM Posts WHERE post_id = " + PostId);
+        Cursor mCursor = dbHelper.selectRecordsRaw("SELECT user_id, header, body, is_void FROM Posts WHERE post_id = " + PostId);
         if (mCursor != null) {
             UserId = mCursor.getInt(0);
             Header = mCursor.getString(1);
             Body = mCursor.getString(2);
+            Voided = mCursor.getInt(3) != 0;
         }
         mCursor.close();
     }

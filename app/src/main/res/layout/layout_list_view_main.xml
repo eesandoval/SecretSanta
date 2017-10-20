@@ -7,7 +7,7 @@
     android:paddingRight="20dp"
     android:paddingTop="20dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -21,9 +21,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/layout_list_view_username"
-            android:textColor="@color/colorPrimaryText"/>
+            android:textColor="@color/colorPrimaryText"
+            android:layout_toEndOf="@id/layout_list_view_user_image"/>
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/layout_list_view_edit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_menu_edit"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:id="@+id/layout_list_view_delete"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_menu_delete"
+            android:layout_toStartOf="@id/layout_list_view_edit"/>
+
+    </RelativeLayout>
 
     <ImageView
         android:paddingTop="10dp"

@@ -23,6 +23,7 @@ public class DatabaseHelper {
     public final static String USER_ID = "user_id";
     public final static String HEADER = "header";
     public final static String BODY = "body";
+    public final static String IS_VOID = "is_void";
 
     public final static String IMAGES_TABLE = "Images";
     public final static String IMAGE_ID = "image_id";
@@ -50,6 +51,7 @@ public class DatabaseHelper {
         values.put(USER_ID, user_id);
         values.put(HEADER, header);
         values.put(BODY, body);
+        values.put(IS_VOID, 0);
         return database.insert(POSTS_TABLE, null, values);
     }
 

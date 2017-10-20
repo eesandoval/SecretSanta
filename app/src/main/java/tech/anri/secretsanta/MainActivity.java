@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,6 +46,14 @@ public class MainActivity extends AppCompatActivity
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         if (!dbHelper.emptyDatabase()) {
             updateFeed();
+        }
+        if (sharedPreferences.getBoolean("DBUpdated", false)) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+            Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -137,8 +146,10 @@ public class MainActivity extends AppCompatActivity
         posts = new ArrayList<>();
         for (int i = 0; i < maxPostId; ++i) {
             Post p = new Post(i + 1, getApplicationContext());
-            posts.add(p);
-            l.add(new MainListViewDataModel(p.Header, p.Body, p.Images.get(0), p.UserName, p.UserImage));
+            if (!p.Voided) {
+                posts.add(p);
+                l.add(new MainListViewDataModel(p.Header, p.Body, p.Images.get(0), p.UserName, p.UserImage));
+            }
         }
         MainListViewAdapter customAdapter = new MainListViewAdapter(this, R.layout.layout_list_view_main, l);
         ListView mainListView = (ListView) findViewById(R.id.main_list_view);
