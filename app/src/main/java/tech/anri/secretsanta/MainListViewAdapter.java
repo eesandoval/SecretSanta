@@ -71,6 +71,9 @@ public class MainListViewAdapter extends ArrayAdapter {
             @Override
             public void onClick(View v) {
                 //do something
+                int postId = ((MainListViewDataModel) getItem(position)).getPostId();
+                Post p = new Post(postId, getContext());
+                p.VoidPost();
                 remove(getItem(position));
                 notifyDataSetChanged();
             }

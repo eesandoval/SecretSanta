@@ -44,9 +44,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        if (!dbHelper.emptyDatabase()) {
-            updateFeed();
-        }
+        updateFeed();
+
         if (sharedPreferences.getBoolean("DBUpdated", false)) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         updateNavDrawer();
+        dbHelper.Dispose();
     }
 
     @Override
@@ -135,25 +135,43 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     private void updateFeed() {
-        int maxPostId = 1;
+        final RemoteDatabaseHelper remoteDatabaseHelper = new RemoteDatabaseHelper(getApplicationContext());
+        Thread t = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    remoteDatabaseHelper.UpdateLocalDatabase();
+                                    remoteDatabaseHelper.UpdateRemoteDatabase();
+                                }});
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ArrayList<MainListViewDataModel> l = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        Cursor mCursor = dbHelper.selectRecordsRaw("SELECT MAX(post_id) FROM Posts");
-        if (mCursor != null) {
-            maxPostId = mCursor.getInt(0);
+        Cursor mCursor = dbHelper.selectRecordsRaw("SELECT post_id FROM Posts");
+        ArrayList<Integer> postIds = new ArrayList<>();
+        if (mCursor != null && mCursor.getCount() > 0) {
+            do {
+                postIds.add(mCursor.getInt(0));
+            } while (mCursor.moveToNext());
         }
-        mCursor.close();
+        if (mCursor != null) {
+            mCursor.close();
+        }
         posts = new ArrayList<>();
-        for (int i = 0; i < maxPostId; ++i) {
-            Post p = new Post(i + 1, getApplicationContext());
+        for (int i = 0; i < postIds.size(); ++i) {
+            Post p = new Post(postIds.get(i), getApplicationContext());
             if (!p.Voided) {
                 posts.add(p);
-                l.add(new MainListViewDataModel(p.Header, p.Body, p.Images.get(0), p.UserName, p.UserImage));
+                l.add(new MainListViewDataModel(p.Header, p.Body, p.getImage(0), p.UserName, p.UserImage, p.PostId));
             }
         }
         MainListViewAdapter customAdapter = new MainListViewAdapter(this, R.layout.layout_list_view_main, l);
         ListView mainListView = (ListView) findViewById(R.id.main_list_view);
         mainListView.setAdapter(customAdapter);
+        dbHelper.Dispose();
     }
 
     private void updateNavDrawer() {
@@ -164,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         this.email = sharedPreferences.getString("email", null);
         this.password = sharedPreferences.getString("password", null);
         this.username = sharedPreferences.getString("username", null);
-        this.userid = sharedPreferences.getInt("userid", 0);
+        this.userid = sharedPreferences.getInt("userid", -1);
         Bitmap userImage = dbHelper.selectImage("SELECT user_image FROM Users WHERE user_id = " + this.userid);
         View headerView = navigationView.getHeaderView(0);
         TextView navHeaderEmail = (TextView)headerView.findViewById(R.id.nav_header_email);
@@ -175,6 +193,7 @@ public class MainActivity extends AppCompatActivity
         if (!(userImage == null)) {
             navHeaderImage.setImageBitmap(userImage);
         }
+        dbHelper.Dispose();
     }
 
     private void onFabClick() {

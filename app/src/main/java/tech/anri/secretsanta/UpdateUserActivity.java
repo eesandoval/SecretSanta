@@ -42,6 +42,7 @@ public class UpdateUserActivity extends AppCompatActivity {
         } else {
             currentImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_default_image));
         }
+        dbHelper.Dispose();
     }
 
     public void onClickConfirmUpdateButton(View view) {
@@ -80,6 +81,7 @@ public class UpdateUserActivity extends AppCompatActivity {
         editor.putString("password", updatedPassword);
         editor.putString("email", updatedEmail);
         editor.apply();
+        dbHelper.Dispose();
         finish();
     }
 

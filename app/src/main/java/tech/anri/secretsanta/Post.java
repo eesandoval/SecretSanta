@@ -30,7 +30,6 @@ public class Post {
         Header = header;
         Body = body;
         this.context = context;
-        dbHelper = new DatabaseHelper(context);
         ReadUser();
         WritePost();
         WriteImage(image);
@@ -39,14 +38,16 @@ public class Post {
     public Post(int postId, Context context) {
         PostId = postId;
         this.context = context;
-        dbHelper = new DatabaseHelper(context);
         ReadPost();
         ReadUser();
         ReadImages();
     }
 
     public void ReadUser() {
+        dbHelper = new DatabaseHelper(context);
         Cursor mCursor = dbHelper.selectRecordsRaw("SELECT user_name, user_image, user_email FROM Users WHERE user_id = " + UserId);
+        Cursor c = dbHelper.selectRecordsRaw("SELECT * FROM Users");
+        int id = c.getInt(0);
         if (mCursor != null) {
             UserName = mCursor.getString(0);
             if (!mCursor.isNull(1)) {
@@ -58,9 +59,11 @@ public class Post {
             UserEmail = mCursor.getString(2);
         }
         mCursor.close();
+        dbHelper.Dispose();
     }
 
     public void ReadPost() {
+        dbHelper = new DatabaseHelper(context);
         Cursor mCursor = dbHelper.selectRecordsRaw("SELECT user_id, header, body, is_void FROM Posts WHERE post_id = " + PostId);
         if (mCursor != null) {
             UserId = mCursor.getInt(0);
@@ -69,9 +72,11 @@ public class Post {
             Voided = mCursor.getInt(3) != 0;
         }
         mCursor.close();
+        dbHelper.Dispose();
     }
 
     public void WritePost() {
+        dbHelper = new DatabaseHelper(context);
         int lastRecord = 0;
 
         Cursor mCursor = dbHelper.selectRecordsRaw("SELECT MAX(post_id) FROM Posts");
@@ -82,21 +87,24 @@ public class Post {
         PostId = lastRecord + 1;
 
         dbHelper.createPost(PostId, UserId, Header, Body);
-
+        dbHelper.Dispose();
     }
 
     public void ReadImages() {
+        dbHelper = new DatabaseHelper(context);
         Images = new ArrayList<>();
         Cursor mCursor = dbHelper.selectRecordsRaw("SELECT image FROM Images WHERE post_id = " + PostId);
-        if (mCursor != null) {
+        if (mCursor != null && mCursor.getCount() > 0) {
             do {
                 Images.add(BitmapFactory.decodeByteArray(mCursor.getBlob(0), 0, mCursor.getBlob(0).length));
             } while (mCursor.moveToNext());
         }
         mCursor.close();
+        dbHelper.Dispose();
     }
 
     public void WriteImage(Bitmap image) {
+        dbHelper = new DatabaseHelper(context);
         int lastRecord = 0;
         byte imageBlob[];
         Images.add(image);
@@ -112,5 +120,19 @@ public class Post {
         imageBlob = outputStream.toByteArray();
 
         dbHelper.createImage(lastRecord + 1, PostId, imageBlob);
+        dbHelper.Dispose();
+    }
+
+    public void VoidPost() {
+        dbHelper = new DatabaseHelper(context);
+        this.Voided = true;
+        dbHelper.updatePost(this.PostId, this.UserId, this.Header, this.Body, true);
+        dbHelper.Dispose();
+    }
+
+    public Bitmap getImage(int position) {
+        if (position >= this.Images.size())
+            return null;
+        return this.Images.get(position);
     }
 }

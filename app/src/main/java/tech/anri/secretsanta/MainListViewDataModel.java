@@ -12,13 +12,15 @@ public class MainListViewDataModel {
     private Bitmap image;
     private String username;
     private Bitmap userimage;
+    private int postid;
 
-    public MainListViewDataModel(String header, String body, Bitmap image, String username, Bitmap userimage) {
+    public MainListViewDataModel(String header, String body, Bitmap image, String username, Bitmap userimage, int postid) {
         this.header = header;
         this.body = body;
         this.image = image;
         this.username = username;
         this.userimage = userimage;
+        this.postid = postid;
     }
 
     public String getHeader() {
@@ -40,4 +42,6 @@ public class MainListViewDataModel {
     public Bitmap getUserimage() {
         return userimage;
     }
+
+    public int getPostId() { return postid; }
 }
